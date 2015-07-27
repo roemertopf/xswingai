@@ -1,9 +1,7 @@
 package de.fischer.xswingai;
 
-import xswing.ai.AIListener;
-import xswing.ai.AISignal;
-import xswing.ai.AgentInterface;
-import xswing.start.*;
+import xswing.ai.AICommunicator;
+import xswing.start.XSwingAI;
 
 /**
  * This class starts XSwing and the AI that plays the game.
@@ -12,56 +10,45 @@ import xswing.start.*;
  */
 public class XSwingStarter{
 		
-	private static class TestAgent implements AIListener, Runnable{
+	private static class TestAgent implements Runnable{
 		
-		private AgentInterface game;
-		private AISignal signal;
-
-		@Override
-		public void gameStarted(AgentInterface game) {
+		private AICommunicator game;
+		private int counter;
+		
+		public TestAgent(AICommunicator game) {
 			this.game = game;
-			synchronized (signal) {
-				if ()
-			}
-			game.dropBall(0);
-			try{
-				Thread.sleep(750);
-			}
-			catch (InterruptedException e){
-				System.err.println("Interrupted during dropBall waiting");
-			}
-			game.dropBall(2);
-			try{
-				Thread.sleep(750);
-			}
-			catch (InterruptedException e){
-				System.err.println("Interrupted during dropBall waiting");
-			}
-			game.dropBall(2);
-//			game.dropBall(2);
-//			game.dropBall(1);
 		}
 
 		@Override
 		public void run() {
-			synchronized (signal) {
-				try {
-					wait();
-				} catch (InterruptedException e) {
-		            e.printStackTrace();
-		        }
+			while (counter < 5){
+				synchronized (game) {
+					try {
+						game.wait();
+					} catch (InterruptedException e) {
+			            e.printStackTrace();
+			        }
+				}
+				game.setDropAt(counter);
+				counter++;
+				try{
+					Thread.sleep(250);
+				}
+				catch (InterruptedException ex){
+					System.err.println("agent sleeping interrupted");
+				}
 			}
-
 		}
 		
 	}
 	
 	public static void main(String[] args) {
+		AICommunicator comm = new AICommunicator();
 		// setting up the test agent
-		TestAgent agent = new TestAgent();
+		TestAgent agent = new TestAgent(comm);
 		Thread agentThread = new Thread(agent);
 		// starting the game in ai mode
-		Thread gameThread = new Thread(new XSwingAI(agent));
+		Thread gameThread = new Thread(new XSwingAI(comm));
 		gameThread.start();
 		agentThread.start();
 	}
