@@ -1,5 +1,8 @@
 package de.fischer.xswingai;
 
+import java.util.Random;
+
+import de.fischer.xswingai.agents.RandomAgent;
 import xswing.ai.AICommunicator;
 import xswing.start.XSwingAI;
 
@@ -28,14 +31,16 @@ public class XSwingStarter{
 					} catch (InterruptedException e) {
 			            e.printStackTrace();
 			        }
+					// waiting is over
+					if (counter % 2 == 0){
+						game.setDropAt(counter-1);
+					}
+					else{
+						game.setDropAt(counter);
+					}
+					counter++;
 				}
-				if (counter % 2 == 0){
-					game.setDropAt(counter-1);
-				}
-				else{
-					game.setDropAt(counter);
-				}
-				counter++;
+				// sleeping so that the game can progress...
 				try{
 					Thread.sleep(250);
 				}
@@ -50,7 +55,8 @@ public class XSwingStarter{
 	public static void main(String[] args) {
 		AICommunicator comm = new AICommunicator();
 		// setting up the test agent
-		TestAgent agent = new TestAgent(comm);
+		RandomAgent agent = new RandomAgent(comm);
+//		TestAgent agent = new TestAgent(comm);
 		Thread agentThread = new Thread(agent);
 		// starting the game in ai mode
 		Thread gameThread = new Thread(new XSwingAI(comm));
