@@ -21,7 +21,8 @@ public class RandomAgent implements Runnable {
 			// synchronizing on monitor AIComminucator
 			synchronized (game) {
 				try {
-					game.wait();
+					// maybe timeout because notify at ending may be lost...(?)
+					game.wait(2500);
 				} catch (InterruptedException e) {
 		            e.printStackTrace();
 		        }
@@ -38,7 +39,7 @@ public class RandomAgent implements Runnable {
 			
 			// waiting for the game to go on and let the render draw the next screen etc..
 			try{
-				Thread.sleep(250);
+				Thread.sleep(500);
 			}
 			catch (InterruptedException ex){
 				System.err.println("agent sleeping interrupted");
