@@ -21,7 +21,7 @@ public class XSwingStarter{
 
 		@Override
 		public void run() {
-			while (counter < 5){
+			while (counter < 10){
 				synchronized (game) {
 					try {
 						game.wait();
@@ -29,7 +29,12 @@ public class XSwingStarter{
 			            e.printStackTrace();
 			        }
 				}
-				game.setDropAt(counter);
+				if (counter % 2 == 0){
+					game.setDropAt(counter-1);
+				}
+				else{
+					game.setDropAt(counter);
+				}
 				counter++;
 				try{
 					Thread.sleep(250);
